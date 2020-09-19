@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.db.name }}
+  labels:
+    app: {{ .Values.db.app }}
+spec: 
+  selector:
+    matchLabels:
+      app: wordpress
+      tier: mysql
+  strategy:
+    type: Recreate
+  template: 
+    metadata:
+      labels:
+        app: {{ .Values.db.app }} 
+        tier: {{ .Values.db.tier }}
+    spec:
+      containers:
+      - image: {{ .Values.db.container.image }} 
+        name: {{ .Values.db.name }}
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password
+        ports:
+        - containerPort: {{ .Values.db.container.port }}
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage 
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-persistent-storage 
+        persistentVolumeClaim:
+          claimName: db-mysql-claim
