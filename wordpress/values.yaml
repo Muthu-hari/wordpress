@@ -1,0 +1,21 @@
+wordpress:
+  name: wordpress
+  app: wordpress 
+  tier: frontend
+  container:
+    image: wordpress:4.8-apache
+    name: wordpress 
+  service:
+    type: NodePort
+    port: 80
+
+db:
+  name: wordpress-mysql 
+  app: wordpress
+  tier: mysql 
+  container:
+    image: mysql:5.6
+    name: mysql
+    port: 3306
+  service: 
+    port: 3306
